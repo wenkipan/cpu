@@ -28,12 +28,14 @@ module Shift_barrel(output reg [31:0] Shift_Out,
                     input [2:0] SHIFT_OP);
 always @(*)
 begin
+    Shift_Out<=32'b0;
+    Shift_Carry_Out <= 1'bx;
     case(SHIFT_OP[2:1])
         2'b00:  //lsl
         begin
             if (Shift_Num == 0)begin
                 Shift_Out       <= Shift_Data;
-                Shift_Carry_Out <= 1'bx;
+                //Shift_Carry_Out <= 1'bx;
             end
             if (Shift_Num >= 1 && Shift_Num <= 32)begin
                 Shift_Out       <= Shift_Data<<Shift_Num;
@@ -41,7 +43,7 @@ begin
             end
             if (Shift_Num>32)begin
                 Shift_Out       <= 0;
-                Shift_Carry_Out <= 0;
+                Shift_Carry_Out <= 32'b0;
             end
         end
         2'b01:  //lsr
@@ -52,15 +54,15 @@ begin
             end
             if (SHIFT_OP[0] == 1 && Shift_Num == 0)begin
                 Shift_Out       <= Shift_Data;
-                Shift_Carry_Out <= 1'bx;
+                //Shift_Carry_Out <= 1'bx;
             end
             if (Shift_Num >= 1 && Shift_Num<= 32)begin
                 Shift_Out       <= Shift_Data>>Shift_Num;
                 Shift_Carry_Out <= Shift_Data[Shift_Num-1];
             end
             if (Shift_Num>32)begin
-                Shift_Out       <= 0;
-                Shift_Carry_Out <= 0;
+                Shift_Out       <= 8'b0;
+                Shift_Carry_Out <= 32'b0;
             end
         end
         2'b10:  //asr
@@ -71,7 +73,7 @@ begin
             end
             if (SHIFT_OP[0] == 1 && Shift_Num == 0)begin
                 Shift_Out       <= Shift_Data;
-                Shift_Carry_Out <= 1'bx;
+                //Shift_Carry_Out <= 1'bx;
             end
             if (Shift_Num>= 1 && Shift_Num<32) begin
                 Shift_Out       <= {{32{Shift_Data[31]}},Shift_Data}>>Shift_Num;
@@ -92,7 +94,7 @@ begin
                 if (SHIFT_OP[0] == 1 && Shift_Num == 0)
                 begin
                     Shift_Out       <= Shift_Data;
-                    Shift_Carry_Out <= 1'bx;
+                    //Shift_Carry_Out <= 1'bx;
                 end
                     if (Shift_Num>= 1 && Shift_Num<= 32)
                     begin

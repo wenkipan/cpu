@@ -46,7 +46,7 @@ wire[31:0]R_Data_C;
 // wire Error2;
 reg [31:0]Data;
 switch_register_file m_switch(sw,swb,M,W_Data,R_Addr_A,R_Addr_B,R_Addr_C,W_Addr,Write_Reg,Write_PC,PC_New,Rst);
-r_f_2 m_register_file(M,W_Data,R_Addr_A,R_Addr_B,R_Addr_C,W_Addr,Write_Reg,Write_PC,PC_New,clk,Rst,R_Data_A,R_Data_B,R_Data_C,Error1,Error2);
+register_file m_register_file(M,W_Data,R_Addr_A,R_Addr_B,R_Addr_C,W_Addr,Write_Reg,clk,Rst,R_Data_A,R_Data_B,R_Data_C,Error1,Error2);
 always @(swb)begin
     if (swb[5] == 1)
         Data <= R_Data_A;

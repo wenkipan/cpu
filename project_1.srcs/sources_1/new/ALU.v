@@ -41,21 +41,21 @@ always@(*) begin
 end
 always@(*) begin
     case(ALU_OP)
-        4'h0,4'h1,4'hC,4'hE, 4'hF,4'h8,4'hD:
+        4'h0,4'h1,4'hC,4'hE,4'hF,4'h8,4'hD:
         begin
-            NZCV[1] = shiftCout;
-            NZCV[0] = VF;
+            NZCV[1] <= shiftCout;
+            NZCV[0] <= VF;
         end
         4'h2,4'h3,4'h4,4'h5,4'h6,4'h7,4'hA:
         begin
-            NZCV[1] = ALU_OP[1]^Cout;
-            NZCV[0] = A[31]^B[31]^F[31]^Cout;
+            NZCV[1] <= ALU_OP[1]^Cout;
+            NZCV[0] <= A[31]^B[31]^F[31]^Cout;
         end
     endcase
 end
 always@(*) begin
-    NZCV[3] = F[31];
-    NZCV[2] = (F == 32'h0)?1'b1:1'b0;
+    NZCV[3] <= F[31];
+    NZCV[2]  <= (F == 32'h0)?1'b1:1'b0;
 end
 endmodule
 

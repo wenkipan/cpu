@@ -27,8 +27,6 @@ module register_file(input [4:0]M,
                      input [3:0]R_Addr_C,
                      input [3:0]W_Addr,
                      input Write_Reg,
-                     input Write_PC,
-                     input [31:0]PC_New,
                      input clk,
                      input Rst,
                      output reg[31:0]R_Data_A,
@@ -43,7 +41,7 @@ reg [31:0]R_abt[13:14];
 reg [31:0]R_svc[13:14];
 reg [31:0]R_und[13:14];
 reg [31:0]R_mon[13:14];
-reg [31:0]R_hyp;                       //special(errorjdg)
+reg [31:0]R_hyp;
 always @(posedge Rst or negedge clk) begin //writein
     if (Rst == 1)begin
         Error1    <= 1;
@@ -123,24 +121,23 @@ always @(posedge Rst or negedge clk) begin //writein
                 endcase
             end
             
-            if (Write_PC)begin
-                R[15] <= PC_New;
-            end
         end
     end
 end
+wire fiq;
+assign fiq = M[3:0] == 4'b0001;
 
 always @(*) begin //read
-    Error2 = 0;
+    Error2 = 1'b0;
+    R_Data_A <= 0;
+    R_Data_B <= 0;
+    R_Data_C <= 0;
     case(R_Addr_A[3:0])
         4'h0,4'h1,4'h2,4'h3,4'h4,4'h5,4'h6,4'h7,4'hF:begin
             R_Data_A <= R[R_Addr_A];
         end
         4'h8,4'h9,4'hA,4'hB,4'hC:begin
-            if (M[3:0] == 4'b0001)
-                R_Data_A <= R_fiq[R_Addr_A];
-            else
-                R_Data_A <= R[R_Addr_A];
+            R_Data_A <= fiq ? R_fiq[R_Addr_A]: R[R_Addr_A];
         end
         4'hD,4'hE:begin
             case(M[3:0])
@@ -162,16 +159,12 @@ always @(*) begin //read
             endcase
         end
     endcase
-    
     case(R_Addr_B[3:0])
         4'h0,4'h1,4'h2,4'h3,4'h4,4'h5,4'h6,4'h7,4'hF:begin
             R_Data_B <= R[R_Addr_B];
         end
         4'h8,4'h9,4'hA,4'hB,4'hC:begin
-            if (M[3:0] == 4'b0001)
-                R_Data_B <= R_fiq[R_Addr_B];
-            else
-                R_Data_B <= R[R_Addr_B];
+            R_Data_B <= fiq ? R_fiq[R_Addr_B]: R[R_Addr_B];
         end
         4'hD,4'hE:begin
             case(M[3:0])
@@ -198,10 +191,7 @@ always @(*) begin //read
             R_Data_C <= R[R_Addr_C];
         end
         4'h8,4'h9,4'hA,4'hB,4'hC:begin
-            if (M[3:0] == 4'b0001)
-                R_Data_C <= R_fiq[R_Addr_C];
-            else
-                R_Data_C <= R[R_Addr_C];
+            R_Data_C <= fiq ? R_fiq[R_Addr_C]: R[R_Addr_C];
         end
         4'hD,4'hE:begin
             case(M[3:0])
